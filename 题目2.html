@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body></body>
+	<script>
+		const convertsParams = search => {
+			// 替换search字符串的?并转换成数组
+			const searchArr = search.replace(/^\?/, '').split('&');
+			//定义放回数据对象
+			const retain = {};
+			// 循环遍历searchArr
+			searchArr.forEach((item, index) => {
+				// 把item转换数组并结构赋值
+				const [a, b] = item.split('=');
+				// 判断retain对象是否存在该元素，不存在该元素直接进行元素赋值，存在该元素，转换为数组并拼接
+				if (!retain.hasOwnProperty(a)) {
+					retain[a] = b;
+				} else {
+					retain[a] = [].concat(retain[a], b);
+				}
+			});
+			return retain;
+		};
+		const parseUrl = url => {
+			// 判断参数是否字符串
+			if (typeof url !== 'string') return;
+			// // 创建 a标签
+			const a = document.createElement('a');
+			// 对a.href进行赋值
+			a.href = url;
+			// 创建URL对象
+			// const a = new URL(url);
+			//返回数据对象
+			return {
+				protocol: a.protocol,
+				host: a.host,
+				path: a.pathname,
+				params: convertsParams(a.search),
+				hash: a.hash.replace('#', ''),
+			};
+		};
+		console.log(parseUrl('http://www.bbkedu.com/product/list?id=123456&sort=discount&name=axsxsx&name=xxvdvdvdsb&name=xxsdsdsb#title'));
+	</script>
+</html>

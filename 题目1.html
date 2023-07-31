@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>级联选择器</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			.selectBox {
+				margin: 100px auto 0;
+				width: 500px;
+			}
+			select {
+				width: 120px;
+				height: 28px;
+				line-height: 24px;
+				text-align: center;
+				margin: 0 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="selectBox">
+			<select>
+				<option value="-1">请选择</option>
+			</select>
+			<select></select>
+			<select></select>
+		</div>
+	</body>
+	<script src="./cascade..js"></script>
+	<script>
+		// import cascade from './cascade..js';
+		// 初始化函数
+		window.onload = function () {
+			/**
+			 *
+			 * @param {*} key 要比较的对象key值
+			 * @param {*} value 比较元素的值
+			 * @param {*} element 元素
+			 */
+			const filterAdta = (value, element, key = 'parentId') => {
+				// 根据id与parentId关联数据
+				const optionArr = cascade.filter(item => item[key] === value);
+				// 生成select的option数据
+				optionArr.forEach(item => {
+					element.options.add(new Option(item.displayName, item.id));
+				});
+			};
+			// 获取dom元素
+			const [province, city, region] = document.querySelectorAll('select');
+			//初始化生成省数据
+			filterAdta('province', province, 'type');
+			// 省级change事件
+			province.addEventListener('change', function (e) {
+				// 清除市级数据
+				city.options.length = 0;
+				// 清除区级数据
+				region.options.length = 0;
+				// 把e.target.value，转换为number类型并进行清空不触发数据关联
+				if (+e.target.value === -1) return;
+				// 把e.target.value，转换为number类型并进行关联省级与市级数据
+				filterAdta(+e.target.value, city);
+				// 把e.target.value，转换为number类型并进行关联市与区级数据 默认第一个
+				const [regionIndex = {}] = city.options;
+				filterAdta(+regionIndex.value, region);
+			});
+
+			// 市级change事件
+			city.addEventListener('change', function (e) {
+				// 清除市级数据
+				region.options.length = 0;
+				// 把e.target.value，转换为number类型并进行关联省级与市级数据
+				filterAdta(+e.target.value, region);
+			});
+			region.addEventListener('change', function (e) {
+				// 关联省级与市级数据
+			});
+		};
+	</script>
+</html>
